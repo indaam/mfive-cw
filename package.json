@@ -1,0 +1,40 @@
+{
+  "name": "mfive-cw",
+  "version": "1.0.0",
+  "description": "A web compiler",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/indaam/mfive-cw.git",
+    "baseUrl": "https://github.com/indaam/mfive-cw"
+  },
+  "devDependencies": {
+    "prettier": "2.0.5"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "bin": {
+    "mfive": "./dist/index.js",
+    "mfive-cw": "./dist/index.js"
+  },
+  "keywords": [
+    "tools",
+    "compiler",
+    "web",
+    "js",
+    "css",
+    "html",
+    "optimize"
+  ],
+  "author": {
+    "name": "indaam",
+    "email": "indaam@gmail.com"
+  },
+  "license": "MIT",
+  "licenseFilename": "LICENSE",
+  "readmeFilename": "README.md"
+}
