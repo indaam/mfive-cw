@@ -26,6 +26,18 @@ const compilers = {
 const liveRealod = (config) => {
   const browser = bs.create();
 
+  const getHtmlPath = (config) => {
+    for (const key in config) {
+      if (config.hasOwnProperty(key)) {
+        const el = config[key];
+        if (el.outputType === 'html') {
+          return el.destination;
+        }
+      }
+    }
+    return null;
+  };
+
   for (const key in config) {
     if (config.hasOwnProperty(key)) {
       const el = config[key];
@@ -55,7 +67,7 @@ const liveRealod = (config) => {
     }
   }
   browser.init({
-    server: './dist',
+    server: './' + (getHtmlPath(config) || 'dist'),
   });
 };
 
