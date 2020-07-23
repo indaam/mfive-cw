@@ -1,10 +1,9 @@
 {
   "name": "mfive-cw",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A web compiler",
-  "main": "app/mfive.js",
+  "main": "index.js",
   "scripts": {
-    "mfive": "node app/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -30,8 +29,8 @@
     "node": ">=10"
   },
   "bin": {
-    "mfive": "./app/cli.js",
-    "mfive-cw": "./app/cli.js"
+    "mfive": "./bin/cli",
+    "mfive-cw": "./bin/cli"
   },
   "keywords": [
     "tools",
