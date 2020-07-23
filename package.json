@@ -1,6 +1,6 @@
 {
   "name": "mfive-cw",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A web compiler",
   "main": "index.js",
   "scripts": {

@@ -29,6 +29,10 @@ Then, to watch use this
 
 or `yarn mfive build` to build
 
+## Setup
+
+!important, by default app will create auto-config `mfive.config.json` after scan src dir then create. But You can change your src dir & build target
+
 ## How it work?
 
 By default, this app will scan `src` directory then create automatic setup base on type file. Example, will find js, will create babel compiler, also when find scss or pug file, will create automatic setup
