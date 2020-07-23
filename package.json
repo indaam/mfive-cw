@@ -1,6 +1,6 @@
 {
   "name": "mfive-cw",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A web compiler",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
     "prettier": "2.0.5",
     "pug-cli": "1.0.0-alpha6",
     "rollup": "2.22.2",
+    "sass": "^1.26.10",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-includepaths": "0.2.3",
     "rollup-plugin-node-resolve": "5.2.0"
