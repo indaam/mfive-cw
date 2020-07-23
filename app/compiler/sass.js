@@ -10,15 +10,19 @@ class Compiler extends BaseClass {
     });
   }
 
-  getSassOutputExt(fileName) {
-    return fileName.replace(/\.sass|\.scss/g, '.css');
+  getSassOutputExt(fileName, extension) {
+    const ext = extension || '.css';
+    return fileName.replace(/\.sass|\.scss/g, ext);
   }
 
   run(watch, file, config) {
     const { msg, err, colors } = this;
     const { cp } = this.libs;
     const sassMain = config.src + '/' + file;
-    const sassOutputExt = this.getSassOutputExt(file);
+    const sassOutputExt = this.getSassOutputExt(
+      file,
+      config && config.extension
+    );
     const sassOutput = config.destination + '/' + sassOutputExt;
     const argv = ['node_modules/sass/sass.js', sassMain, sassOutput];
     if (watch) {
