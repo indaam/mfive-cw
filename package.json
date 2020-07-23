@@ -2,8 +2,9 @@
   "name": "mfive-cw",
   "version": "1.0.0",
   "description": "A web compiler",
-  "main": "dist/index.js",
+  "main": "app/mfive.js",
   "scripts": {
+    "mfive": "node app/cli.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,21 +12,35 @@
     "url": "git+https://github.com/indaam/mfive-cw.git",
     "baseUrl": "https://github.com/indaam/mfive-cw"
   },
-  "devDependencies": {
-    "prettier": "2.0.5"
+  "dependencies": {
+    "@babel/core": "7.10.5",
+    "@babel/preset-env": "7.10.4",
+    "browser-sync": "2.26.10",
+    "chokidar": "3.4.1",
+    "colors": "1.4.0",
+    "prettier": "2.0.5",
+    "pug-cli": "1.0.0-alpha6",
+    "rollup": "2.22.2",
+    "rollup-plugin-babel": "4.4.0",
+    "rollup-plugin-includepaths": "0.2.3",
+    "rollup-plugin-node-resolve": "5.2.0"
   },
+  "devDependencies": {},
   "engines": {
     "node": ">=10"
   },
   "bin": {
-    "mfive": "./dist/index.js",
-    "mfive-cw": "./dist/index.js"
+    "mfive": "./app/cli.js",
+    "mfive-cw": "./app/cli.js"
   },
   "keywords": [
     "tools",
     "compiler",
+    "pug",
     "web",
     "js",
+    "ts",
+    "coffe",
     "css",
     "html",
     "optimize"
