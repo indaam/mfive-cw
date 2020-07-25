@@ -1,7 +1,6 @@
 const BaseClass = require('./baseClass');
 const compiler = require('./compiler');
 const createConfig = require('./createConfig');
-
 const bs = require('browser-sync');
 
 const {
@@ -42,27 +41,29 @@ const liveRealod = (config) => {
     if (config.hasOwnProperty(key)) {
       const el = config[key];
 
-      if (el.outputType === 'html') {
-        console.log('setup ' + el.outputType);
-        const patterns = el.destination + '/*.' + el.outputType;
-        browser.watch(patterns).on('change', function (e, f) {
-          console.log('reload ' + el.outputType);
-          browser.reload();
-        });
-      } else if (['js', 'css'].includes(el.outputType)) {
-        console.log('setup ' + el.outputType);
-        const patterns = el.destination + '/*.' + el.outputType;
-        browser.watch(patterns).on('change', function (e, f) {
-          console.log('reload ' + el.outputType);
-          browser.reload('*.' + el.outputType);
-        });
-      } else {
-        console.log('setup ' + el.outputType);
-        const patterns = el.destination + '/**';
-        browser.watch(patterns).on('change', function (e, f) {
-          console.log('reload ' + el.outputType);
-          browser.reload();
-        });
+      if (el && !el.disable) {
+        if (el.outputType === 'html') {
+          console.log('setup ' + el.outputType);
+          const patterns = el.destination + '/*.' + el.outputType;
+          browser.watch(patterns).on('change', function (e, f) {
+            console.log('reload ' + el.outputType);
+            browser.reload();
+          });
+        } else if (['js', 'css'].includes(el.outputType)) {
+          console.log('setup ' + el.outputType);
+          const patterns = el.destination + '/*.' + el.outputType;
+          browser.watch(patterns).on('change', function (e, f) {
+            console.log('reload ' + el.outputType);
+            browser.reload('*.' + el.outputType);
+          });
+        } else {
+          console.log('setup ' + el.outputType);
+          const patterns = el.destination + '/**';
+          browser.watch(patterns).on('change', function (e, f) {
+            console.log('reload ' + el.outputType);
+            browser.reload();
+          });
+        }
       }
     }
   }
@@ -82,12 +83,14 @@ class Mfive extends BaseClass {
     }
   }
 
-  initConfig() {
+  initConfig(watchList) {
     const { dir } = this;
     const configPath = dir.root + '/mfive.config.json';
+    let temp;
     try {
       const mfiveConfig = require(configPath);
-      return mfiveConfig;
+      temp = mfiveConfig;
+      // return mfiveConfig;
     } catch (error) {
       const conf = new createConfig();
       const configDefault = conf.init('src');
@@ -96,9 +99,24 @@ class Mfive extends BaseClass {
         JSON.stringify(configDefault, null, 2)
       );
       if (configIsWrite) {
-        return configDefault;
+        temp = temp;
+        // return configDefault;
       }
     }
+
+    if (watchList === 'all') {
+      return temp;
+    }
+
+    for (const key in temp) {
+      if (temp.hasOwnProperty(key)) {
+        if (!watchList.includes(key)) {
+          temp[key]['disable'] = true;
+        }
+      }
+    }
+
+    return temp;
   }
 
   getAssetsWatchDirs(config) {
@@ -106,7 +124,7 @@ class Mfive extends BaseClass {
     for (const key in config) {
       if (config.hasOwnProperty(key)) {
         const el = config[key];
-        if (el.isAssets) {
+        if (el.isAssets && !el.disable) {
           temp.push(el.src);
         }
       }
@@ -143,12 +161,12 @@ class Mfive extends BaseClass {
   }
 
   runCompile(config, watch) {
+    // run when config avaliable
     for (const key in config) {
       if (config.hasOwnProperty(key)) {
         const el = config[key];
-        if (compilers && compilers[key]) {
+        if (compilers && compilers[key] && el && !el.disable) {
           const compiler = compilers[key];
-
           if (el.outputType === 'html') {
             compiler.init(watch, el, (count, pugLen) => {
               if (count === pugLen && watch) {
@@ -159,9 +177,23 @@ class Mfive extends BaseClass {
             compiler.init(watch, el);
           }
         } else {
-          console.log(key + ' is not setup');
+          console.log(key + ' is not run');
         }
       }
+    }
+
+    // Force run when pug disable
+    if (watch) {
+      for (const key in config) {
+        if (config.hasOwnProperty(key)) {
+          const el = config[key];
+          if (el.outputType === 'html' && el.disable) {
+            liveRealod(config);
+          }
+        }
+      }
+
+      this.watchAssets(config);
     }
   }
 
@@ -193,33 +225,42 @@ class Mfive extends BaseClass {
     return temp;
   }
 
+  getWatchList(argv) {
+    const supports = ['pug', 'sass', 'images', 'js', 'ts', 'coffe'];
+    const temp = [];
+    argv.forEach((el) => {
+      if (supports.includes(el)) {
+        temp.push(el);
+      }
+    });
+    if (temp && temp.length) {
+      return temp;
+    }
+    return 'all';
+  }
+
   init() {
     const { argv } = this;
-    const config = this.initConfig();
+    const watchList = this.getWatchList(argv.argv);
+    const config = this.initConfig(watchList);
 
     if (argv && argv.clean) {
       return this.clean(config);
     }
 
     if (argv && argv.browser) {
-      return this.liveRealod(config);
+      return liveRealod(config);
     }
 
     if (argv && argv.watch) {
-      // const clean = this.clean(config);
-      // if (clean) {
-      this.runCompile(config, true);
-      this.watchAssets(config);
-      // }
-    } else {
-      // const clean = this.clean(config);
-      // if (clean) {
-      this.runCompile(config, false);
-      // }
+      return this.runCompile(config, true);
     }
     if (argv && argv.build) {
       console.log('TODO BUILD');
+      const build = true;
+      // return this.runCompile(config, true, build);
     }
+    return this.runCompile(config, false);
   }
 }
 
