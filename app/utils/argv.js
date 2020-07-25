@@ -10,7 +10,9 @@ const strToKeyValue = (str, replacer, clean) => {
 };
 
 const getArgv = () => {
-  const temp = {};
+  const temp = {
+    argv: argv,
+  };
   for (let index = 0; index < argv.length; index++) {
     const element = argv[index];
     const keyValue = strToKeyValue(element, '=', '--');
