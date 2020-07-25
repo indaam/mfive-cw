@@ -10,9 +10,12 @@ class Compiler extends BaseClass {
     });
   }
 
-  rollupConfig(config, jsfile) {
-    return `
-    {
+  createConfigName(jsfile) {
+    return 'rollup' + jsfile.replace('.', '');
+  }
+
+  rollupDefaultConfig(config, jsfile) {
+    const rollupConfig = `{
       input: '${config.src}/${jsfile}',
       output: {
         dir: '${config.destination}',
@@ -40,27 +43,127 @@ class Compiler extends BaseClass {
           externalHelpers: true,
         }),
         resolve(),
-      ],
-    }
-    `;
+      ]
+    };`;
+
+    return {
+      name: this.createConfigName(jsfile),
+      configDependencies: null,
+      rollupConfig: rollupConfig,
+    };
   }
 
-  createRollupConfig(config, jsfile) {
-    const before = `
-    const includePaths = require('rollup-plugin-includepaths');
-    const resolve = require('rollup-plugin-node-resolve');
-    const babel = require('rollup-plugin-babel');
-    module.exports =
-    `;
+  rollupReactConfig(config, jsfile) {
+    const { cp, msg } = this.libs;
 
-    const temp = [];
-    jsfile.forEach((el) => {
-      temp.push(this.rollupConfig(config, el));
+    const reactDependencies = ['react', 'react-dom'];
+    const reactDevDependencies = [
+      '@babel/plugin-proposal-decorators',
+      '@babel/plugin-proposal-object-rest-spread',
+      '@babel/plugin-syntax-dynamic-import',
+      '@babel/preset-env',
+      '@babel/preset-react',
+      'babel-plugin-transform-class-properties',
+    ];
+
+    const addReactDependencies = cp.execSync(
+      'yarn add ' + reactDependencies.join(' ')
+    );
+    msg('Done Add React Dependencies' + addReactDependencies);
+    const addReactDevDependencies = cp.execSync(
+      'yarn add -D ' + reactDevDependencies.join(' ')
+    );
+    msg('Done Add React Dev Dependencies' + addReactDevDependencies);
+    const rollupConfig = `{
+      input: '${config.src}/${jsfile}',
+      output: {
+        dir: '${config.destination}',
+        format: 'iife',
+        sourcemap: true,
+        banner: 'var process = {env: { NODE_ENV: "development"} };',
+      },
+      watch: {
+        include: '${config.src}/**',
+        chokidar: {
+          useFsEvents: false,
+        },
+      },
+      context: 'window',
+      plugins: [
+        commonjs({
+          include: 'node_modules/**',
+          browser: true,
+        }),
+        babel({
+          babelrc: false,
+          configFile: false,
+          envName: 'development',
+          presets: ['@babel/preset-env', '@babel/preset-react'],
+          exclude: 'node_modules/**',
+          plugins: [
+            'transform-class-properties',
+            '@babel/plugin-proposal-object-rest-spread',
+            [
+              '@babel/plugin-proposal-decorators',
+              {
+                legacy: true,
+              },
+            ],
+            '@babel/plugin-syntax-dynamic-import',
+          ],
+        }),
+        resolve(),
+      ],
+    };`;
+
+    return {
+      name: this.createConfigName(jsfile),
+      configDependencies: [
+        "const commonjs = require('rollup-plugin-commonjs');",
+      ],
+      rollupConfig: rollupConfig,
+    };
+  }
+
+  createRollupConfig(baseConfigDependencies, configFileLists) {
+    let baseConfig = '';
+    let fileConfig = '';
+    const configName = [];
+    configFileLists.forEach((el) => {
+      if (el && el.configDependencies && el.configDependencies.length) {
+        el.configDependencies.forEach((element) => {
+          baseConfigDependencies.push(element);
+        });
+        baseConfigDependencies.concat(el.configDependencies);
+      }
+      fileConfig += `const ${el.name} = ${el.rollupConfig}`;
+      configName.push(el.name);
     });
 
-    return (
-      before + (jsfile.length === 1 ? temp[0] : '[' + temp.join(',') + ']')
-    );
+    baseConfig += baseConfigDependencies.join('');
+    return `${baseConfig}${fileConfig} module.exports = ${
+      configFileLists.length === 1
+        ? configName[0]
+        : '[' + configName.join(', ') + ']'
+    }`;
+  }
+
+  getRollupConfig(config, jsfile) {
+    const baseConfigDependencies = [
+      "const includePaths = require('rollup-plugin-includepaths');",
+      "const resolve = require('rollup-plugin-node-resolve');",
+      "const babel = require('rollup-plugin-babel');",
+    ];
+    const configFileLists = [];
+
+    jsfile.forEach((el) => {
+      if (/react/.test(el)) {
+        configFileLists.push(this.rollupReactConfig(config, el));
+      } else {
+        configFileLists.push(this.rollupDefaultConfig(config, el));
+      }
+    });
+    return this.createRollupConfig(baseConfigDependencies, configFileLists);
   }
 
   writeRollupConfig(location, content) {
@@ -100,7 +203,7 @@ class Compiler extends BaseClass {
     const { msg, err, colors } = this;
     const { cp } = this.libs;
     const jsFile = this.getRootFiles(config.src);
-    const rollupConfig = this.createRollupConfig(config, jsFile);
+    const rollupConfig = this.getRollupConfig(config, jsFile);
     const rollupConfigFile = 'mfive.js.rollup.js';
 
     const isHaveConfig = this.checkRollupConfig(
