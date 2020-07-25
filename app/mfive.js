@@ -72,7 +72,45 @@ const liveRealod = (config) => {
   });
 };
 
+const help = `
+  Commands:
+
+  -v, version ... app version
+  -h, help ...... show help
+  -w, watch ..... watch compiler
+  -b, build ..... build & optimize[TODO]
+  -i, init ...... create initial(Only for new project)[TODO]
+
+  Options:
+
+  sass .......... compile sass
+  js ............ compile js
+  pug ........... compile pug
+  images ........ compile images
+  ts ............ compile typescript
+
+  Example CLI:
+
+  mfive watch ............ watch all
+  mfive watch pug sass ... only watch pug & sass
+  mfive pug sass ......... only compile pug sass
+`;
+
 class Mfive extends BaseClass {
+  version() {
+    const { dir } = this;
+    const packagePath = dir.root + '/package.json';
+    const packageJson = require(packagePath);
+    return 'v.' + (packageJson && packageJson.version) || null;
+  }
+  help() {
+    const { dir } = this;
+    const packagePath = dir.root + '/package.json';
+    const packageJson = require(packagePath);
+    const packageName = packageJson && packageJson.name;
+    const packageVersion = packageJson && packageJson.version;
+    return `  ${packageName}(${packageVersion})\n${help}`;
+  }
   writeConfigFile(location, content) {
     const { fs } = this.libs;
     try {
@@ -90,7 +128,6 @@ class Mfive extends BaseClass {
     try {
       const mfiveConfig = require(configPath);
       temp = mfiveConfig;
-      // return mfiveConfig;
     } catch (error) {
       const conf = new createConfig();
       const configDefault = conf.init('src');
@@ -99,8 +136,7 @@ class Mfive extends BaseClass {
         JSON.stringify(configDefault, null, 2)
       );
       if (configIsWrite) {
-        temp = temp;
-        // return configDefault;
+        temp = configDefault;
       }
     }
 
@@ -243,6 +279,14 @@ class Mfive extends BaseClass {
     const { argv } = this;
     const watchList = this.getWatchList(argv.argv);
     const config = this.initConfig(watchList);
+
+    if (argv && argv.help) {
+      return console.log(this.help());
+    }
+
+    if (argv && argv.version) {
+      return console.log(this.version());
+    }
 
     if (argv && argv.clean) {
       return this.clean(config);
