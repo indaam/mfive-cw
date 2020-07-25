@@ -21,11 +21,24 @@ const dir = {
   current: String(__dirname).replace(/\s/g, '// '),
 };
 
+const updateArgv = (argv) => {
+  if (argv && argv['-v']) {
+    argv['version'] = argv['-v'] || true;
+  }
+  if (argv && argv['-h']) {
+    argv['help'] = argv['-h'] || true;
+  }
+  if (argv && argv['-w']) {
+    argv['watch'] = argv['-w'] || true;
+  }
+  return argv;
+};
+
 class BaseCLass {
   constructor() {
     this.libs = libs;
     this.dir = { ...dir };
-    this.argv = { ...argv };
+    this.argv = updateArgv(argv);
     this.func = func;
     this.colors = colors;
     this.msg = function (msg) {
