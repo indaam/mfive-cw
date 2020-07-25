@@ -106,3 +106,8 @@ dist
 .DS_Store
 indaam.note.md
 iTodo.md
+src
+dist
+build
+mfive.config.json
+mfive.js.rollup.js

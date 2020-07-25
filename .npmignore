@@ -1,3 +1,9 @@
 .vscode
 indaam.note.md
 iTodo.md
+src
+temp
+dist
+build
+mfive.config.json
+mfive.js.rollup.js
