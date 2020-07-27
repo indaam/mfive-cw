@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const Mfive =  require('../index');
+const Mfive = require('../');
 
 const m5 = new Mfive();
 m5.init();

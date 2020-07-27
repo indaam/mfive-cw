@@ -98,14 +98,12 @@ const help = `
 
 class Mfive extends BaseClass {
   version() {
-    const { dir } = this;
-    const packagePath = dir.root + '/package.json';
+    const packagePath = '../package.json';
     const packageJson = require(packagePath);
     return 'v.' + (packageJson && packageJson.version) || null;
   }
   help() {
-    const { dir } = this;
-    const packagePath = dir.root + '/package.json';
+    const packagePath = '../package.json';
     const packageJson = require(packagePath);
     const packageName = packageJson && packageJson.name;
     const packageVersion = packageJson && packageJson.version;
