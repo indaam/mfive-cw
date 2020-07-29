@@ -1,6 +1,6 @@
 {
   "name": "mfive-cw",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A web compiler",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "chokidar": "3.4.1",
     "colors": "1.4.0",
     "prettier": "2.0.5",
-    "pug-cli": "1.0.0-alpha6",
+    "pug-cli": "https://github.com/indaam/pug-cli",
     "rollup": "2.22.2",
     "rollup-plugin-babel": "4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",

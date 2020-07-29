@@ -106,7 +106,31 @@ const getDirFromPath = (path) => {
   return d.join('/');
 };
 
+const createArgv = (data, extra) => {
+  if (!data) {
+    return null;
+  }
+
+  if (typeof data === 'string') {
+    return data.split(' ');
+  }
+
+  const temp = [];
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const el = data[key];
+      temp.push(extra + key);
+
+      if (el && typeof el !== 'boolean') {
+        temp.push(el);
+      }
+    }
+  }
+  return temp;
+};
+
 module.exports = {
+  createArgv,
   getFileFromPath,
   checkIsAssests,
   getOutputType,

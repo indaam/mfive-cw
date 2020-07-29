@@ -2145,10 +2145,9 @@ pug-attrs@^2.0.4:
     js-stringify "^1.0.1"
     pug-runtime "^2.0.5"
 
-pug-cli@1.0.0-alpha6:
+"pug-cli@https://github.com/indaam/pug-cli":
   version "1.0.0-alpha6"
-  resolved "https://registry.yarnpkg.com/pug-cli/-/pug-cli-1.0.0-alpha6.tgz#1ca539ea4ac0ebb69ce4aae84aeed5d64ffe6501"
-  integrity sha1-HKU56krA67ac5KroSu7V1k/+ZQE=
+  resolved "https://github.com/indaam/pug-cli#7b5ab94b86e4929bd9d8eb3c3bc795b482fbe8c4"
   dependencies:
     chalk "^1.0.0"
     commander "^2.8.1"

@@ -1,6 +1,6 @@
 const utils = require('./utils');
 const { libs, argv, func } = utils;
-const { colors, fs } = libs;
+const { colors, fs, path } = libs;
 
 colors.setTheme({
   msg: ['brightCyan', 'bold'],
@@ -19,6 +19,7 @@ colors.setTheme({
 const dir = {
   root: String(process.cwd()).replace(/\s/g, '// '),
   current: String(__dirname).replace(/\s/g, '// '),
+  module: path.dirname(__dirname),
 };
 
 const updateArgv = (argv) => {

@@ -22,7 +22,7 @@ const compilers = {
   copy: new Copy(),
 };
 
-const liveRealod = (config) => {
+const runLiveReload = (config) => {
   const browser = bs.create();
 
   const getHtmlPath = (config) => {
@@ -43,22 +43,22 @@ const liveRealod = (config) => {
 
       if (el && !el.disable) {
         if (el.outputType === 'html') {
-          console.log('setup ' + el.outputType);
           const patterns = el.destination + '/*.' + el.outputType;
+          console.log('setup ' + el.outputType, 'with pattern', patterns);
           browser.watch(patterns).on('change', function (e, f) {
             console.log('reload ' + el.outputType);
             browser.reload();
           });
         } else if (['js', 'css'].includes(el.outputType)) {
-          console.log('setup ' + el.outputType);
           const patterns = el.destination + '/*.' + el.outputType;
+          console.log('setup ' + el.outputType, 'with pattern', patterns);
           browser.watch(patterns).on('change', function (e, f) {
             console.log('reload ' + el.outputType);
             browser.reload('*.' + el.outputType);
           });
         } else {
-          console.log('setup ' + el.outputType);
           const patterns = el.destination + '/**';
+          console.log('setup ' + el.outputType, 'with pattern', patterns);
           browser.watch(patterns).on('change', function (e, f) {
             console.log('reload ' + el.outputType);
             browser.reload();
@@ -70,6 +70,30 @@ const liveRealod = (config) => {
   browser.init({
     server: './' + (getHtmlPath(config) || 'dist'),
   });
+};
+
+const liveReaload = (config, pugConfig, options) => {
+  if (pugConfig && options) {
+    const { count, countRender } = options;
+    const { argv } = pugConfig;
+    if (argv) {
+      if (argv.ignoreinitial) {
+        if (count === 1) {
+          return runLiveReload(config);
+        }
+      } else if (argv.main) {
+        if (countRender === 1) {
+          return runLiveReload(config);
+        }
+      }
+    } else {
+      if ((options && options.countRender) === (options && options.pugLen)) {
+        return runLiveReload(config);
+      }
+    }
+  } else {
+    return runLiveReload(config);
+  }
 };
 
 const help = `
@@ -194,6 +218,38 @@ class Mfive extends BaseClass {
       });
   }
 
+  checkPugChange(config, pugConfig, options, pugRunner) {
+    const { count, countRender, pugLen, isInit } = options;
+    const { chokidar } = this.libs;
+
+    if (count === 1) {
+      const watcher = chokidar.watch(pugConfig.src, {
+        ignored: /(^|[\/\\])\../, // ignore dotfiles
+        persistent: true,
+        ignoreInitial: true,
+      });
+
+      watcher.on('add', (path) => {
+        const compiler = compilers['pug'];
+
+        if (watcher && watcher.close && typeof watcher.close === 'function') {
+          watcher.close().then((res) => {
+            if (
+              pugRunner &&
+              pugRunner.kill &&
+              typeof pugRunner.kill === 'function'
+            ) {
+              pugRunner.kill();
+            }
+            compiler.init(true, pugConfig, (options, pugRunner) => {
+              this.checkPugChange(config, config['pug'], options, pugRunner);
+            });
+          });
+        }
+      });
+    }
+  }
+
   runCompile(config, watch) {
     // run when config avaliable
     for (const key in config) {
@@ -202,9 +258,10 @@ class Mfive extends BaseClass {
         if (compilers && compilers[key] && el && !el.disable) {
           const compiler = compilers[key];
           if (el.outputType === 'html') {
-            compiler.init(watch, el, (count, pugLen) => {
-              if (count === pugLen && watch) {
-                liveRealod(config);
+            compiler.init(watch, el, (options, pugRunner) => {
+              if (options && watch) {
+                this.checkPugChange(config, config[key], options, pugRunner);
+                liveReaload(config, config[key], options);
               }
             });
           } else {
@@ -222,7 +279,7 @@ class Mfive extends BaseClass {
         if (config.hasOwnProperty(key)) {
           const el = config[key];
           if (el.outputType === 'html' && el.disable) {
-            liveRealod(config);
+            liveReaload(config);
           }
         }
       }
@@ -291,7 +348,7 @@ class Mfive extends BaseClass {
     }
 
     if (argv && argv.browser) {
-      return liveRealod(config);
+      return liveReaload(config);
     }
 
     if (argv && argv.watch) {
