@@ -189,14 +189,21 @@ class Compiler extends BaseClass {
     const { fs } = this.libs;
     if (fs.existsSync(location)) {
       info(location + ' is exists');
-      const confLen = require(dir.root + '/' + location);
-      if (confLen.length === jsFile.length) {
+      const mfiveRollupConfig = require(dir.root + '/' + location);
+      if (mfiveRollupConfig.length === jsFile.length) {
         return 1;
+      } else {
+        if (
+          typeof mfiveRollupConfig === 'object' &&
+          mfiveRollupConfig.hasOwnProperty('input')
+        ) {
+          return 1;
+        }
       }
       info('ReCreate rollup config' + location);
       return this.writeRollupConfig(location, content);
     }
-    return this.writeRollupConfig(location, content);
+    // return this.writeRollupConfig(location, content);
   }
 
   init(watch, config) {
