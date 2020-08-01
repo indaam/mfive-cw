@@ -76,6 +76,9 @@ const getFileType = (path) => {
 };
 
 const getOutputType = (extention) => {
+  if (/html/.test(extention)) {
+    return 'html';
+  }
   if (/pug/.test(extention)) {
     return 'html';
   }
@@ -129,7 +132,17 @@ const createArgv = (data, extra) => {
   return temp;
 };
 
+const isEmptyObject = (obj) => {
+  return !Object.keys(obj).length;
+};
+
+const isHaveKey = (obj, key) => {
+  return obj.hasOwnProperty(key);
+};
+
 module.exports = {
+  isHaveKey,
+  isEmptyObject,
   createArgv,
   getFileFromPath,
   checkIsAssests,
