@@ -5,6 +5,7 @@ const SassCompiler = require('./sass');
 const ImagesCompiler = require('./images');
 const FontsCompiler = require('./fonts');
 const Copy = require('./copy');
+const StaticCompiler = require('./static');
 
 module.exports = {
   JsCompiler,
@@ -14,4 +15,5 @@ module.exports = {
   ImagesCompiler,
   FontsCompiler,
   Copy,
+  StaticCompiler,
 };

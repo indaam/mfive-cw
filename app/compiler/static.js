@@ -16,23 +16,23 @@ class Compiler extends BaseClass {
     const { msg, err, colors } = this;
     const { cp } = this.libs;
 
-    const fontSrc = config.src + '/.';
-    const fontDestination = config.destination;
-    const isHavaDestination = this.checkDestination(fontDestination);
+    const staticSource = config.src + '/.';
+    const staticDestination = config.destination;
+    const isHavaDestination = this.checkDestination(staticDestination);
 
     if (!isHavaDestination) {
       return null;
     }
 
-    msg('start fonts');
-    const fonts = cp.spawn('cp', ['-rv', fontSrc, fontDestination]);
+    msg('start static');
+    const _static = cp.spawn('cp', ['-rv', staticSource, staticDestination]);
 
-    fonts.stdout.on('data', function (data) {
-      console.log(colors.info('fonts log'));
+    _static.stdout.on('data', function (data) {
+      console.log(colors.info('static log'));
       console.log(colors.msg('%s'), data);
     });
-    fonts.stderr.on('data', (data) => {
-      console.log(colors.info('fonts log'));
+    _static.stderr.on('data', (data) => {
+      console.log(colors.info('static log'));
       console.log(colors.err('%s'), data);
     });
   }

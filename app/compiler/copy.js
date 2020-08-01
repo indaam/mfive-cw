@@ -1,4 +1,5 @@
-const BaseClass = require('../baseClass');
+const modules = require('../modules');
+const { BaseClass } = modules;
 
 class Copy extends BaseClass {
   checkDestination(destination) {

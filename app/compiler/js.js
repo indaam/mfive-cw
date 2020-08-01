@@ -1,4 +1,5 @@
-const BaseClass = require('../baseClass');
+const modules = require('../modules');
+const { BaseClass } = modules;
 
 class Compiler extends BaseClass {
   getRootFiles(rootPath) {
@@ -202,14 +203,16 @@ class Compiler extends BaseClass {
       }
       info('ReCreate rollup config' + location);
       return this.writeRollupConfig(location, content);
+    } else {
+      return this.writeRollupConfig(location, content);
     }
-    // return this.writeRollupConfig(location, content);
   }
 
   init(watch, config) {
     const { msg, err, colors } = this;
     const { cp } = this.libs;
     const jsFile = this.getRootFiles(config.src);
+
     const rollupConfig = this.getRollupConfig(config, jsFile);
     const rollupConfigFile = 'mfive.js.rollup.js';
 

@@ -1,4 +1,5 @@
-const BaseClass = require('../baseClass');
+const modules = require('../modules');
+const { BaseClass } = modules;
 
 class Compiler extends BaseClass {
   getRootFiles(rootPath) {
@@ -75,7 +76,7 @@ class Compiler extends BaseClass {
       isInit = false;
       count = 0;
       countRender = 0;
-      console.log(colors.err('Pug is close : Add new file'));
+      console.log(colors.info('Pug is close : Add new file'));
       console.log(colors.info('Save your new file'));
     });
   }

@@ -1,4 +1,5 @@
-const BaseClass = require('../baseClass');
+const modules = require('../modules');
+const { BaseClass } = modules;
 
 class Compiler extends BaseClass {
   constructor() {
@@ -7,7 +8,7 @@ class Compiler extends BaseClass {
   async svg(_this, path) {
     const { imagemin, imageminSvgo } = _this.libs;
     const res = await imagemin(['sample.svg', 'sample2.svg'], {
-      destination: 'dist/images',
+      destination: 'public/images',
       plugins: [
         imageminSvgo({
           plugins: [{ removeViewBox: false }],
@@ -20,7 +21,7 @@ class Compiler extends BaseClass {
     const { imagemin, imageminWebp } = this.libs;
 
     const res = await imagemin(['src/images/*.jpg'], {
-      destination: 'dist/images',
+      destination: 'public/images',
       plugins: [imageminWebp({ quality: 70 })],
     });
 
@@ -30,7 +31,7 @@ class Compiler extends BaseClass {
     const { imagemin, imageminGiflossy } = this.libs;
 
     const res = await imagemin(['src/images/gif/*.gif'], {
-      destination: 'dist/images',
+      destination: 'public/images',
       plugins: [imageminGiflossy({ lossy: 80 })],
     });
 
@@ -41,7 +42,7 @@ class Compiler extends BaseClass {
     const { imagemin, imageminPngquant } = this.libs;
 
     await imagemin(['src/images/*.png'], {
-      destination: 'dist/images',
+      destination: 'public/images',
       plugins: [
         imageminPngquant({
           quality: [0.6, 0.8],
@@ -53,7 +54,7 @@ class Compiler extends BaseClass {
     const { imagemin, imageminMozjpeg } = this.libs;
 
     await imagemin(['src/images/jpg/*.jpg'], {
-      destination: 'dist/images',
+      destination: 'public/images',
       plugins: [
         imageminMozjpeg({
           quality: 70,
