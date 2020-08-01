@@ -1,5 +1,6 @@
-const utils = require('./utils');
-const { libs, argv, func } = utils;
+const utils = require('../utils');
+
+const { libs, func, argv } = utils;
 const { colors, fs, path } = libs;
 
 colors.setTheme({
@@ -19,7 +20,8 @@ colors.setTheme({
 const dir = {
   root: String(process.cwd()).replace(/\s/g, '// '),
   current: String(__dirname).replace(/\s/g, '// '),
-  module: path.dirname(__dirname),
+  module: path.resolve(__dirname),
+  currentRoot: path.resolve(__dirname, '../../'),
 };
 
 const updateArgv = (argv) => {
@@ -32,6 +34,9 @@ const updateArgv = (argv) => {
   if (argv && argv['-w']) {
     argv['watch'] = argv['-w'] || true;
   }
+  if (argv && argv['-i']) {
+    argv['init'] = argv['-i'] || true;
+  }
   return argv;
 };
 
@@ -39,17 +44,23 @@ class BaseCLass {
   constructor() {
     this.libs = libs;
     this.dir = { ...dir };
-    this.argv = updateArgv(argv);
+    this.argv = updateArgv(argv());
     this.func = func;
     this.colors = colors;
-    this.msg = function (msg) {
-      console.log(colors.msg(msg));
+    this.msg = function (msg, type) {
+      if (type) {
+        return console.log(colors[type](msg));
+      }
+      return console.log(colors.msg(msg));
     };
     this.err = function (msg) {
       console.log(colors.err(msg));
     };
     this.info = function (msg) {
       console.log(colors.info(msg));
+    };
+    this.warn = function (msg) {
+      console.log(colors.warn(msg));
     };
   }
 
