@@ -4,6 +4,7 @@
   "description": "A web compiler",
   "main": "index.js",
   "scripts": {
+    "mfive": "node ./bin/cli",
     "clean": "rm -rf node_modules/",
     "fresh": "rm -rf node_modules/ && yarn install",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,21 +15,9 @@
     "baseUrl": "https://github.com/indaam/mfive-cw"
   },
   "dependencies": {
-    "@babel/core": "7.10.5",
-    "@babel/preset-env": "7.10.4",
-    "browser-sync": "2.26.10",
-    "chokidar": "3.4.1",
     "colors": "1.4.0",
-    "prettier": "2.0.5",
-    "pug-cli": "https://github.com/indaam/pug-cli",
-    "rollup": "2.22.2",
-    "rollup-plugin-babel": "4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-includepaths": "0.2.3",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "sass": "^1.26.10"
+    "prettier": "2.0.5"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=10"
   },
@@ -48,6 +37,7 @@
     "html",
     "optimize"
   ],
+  "preferGlobal": true,
   "author": {
     "name": "indaam",
     "email": "indaam@gmail.com"

@@ -1,3 +1,3 @@
-const Mfive = require('./app/mfive');
+const Mfive = require('./mfive');
 
 module.exports = Mfive;
