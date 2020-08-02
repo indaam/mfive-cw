@@ -1,6 +1,7 @@
 const compiler = require('./app/compiler');
 const modules = require('./app/modules');
 const utils = require('./app/utils');
+const { cp } = require('./app/utils/libs');
 
 const { BaseClass, CreateConfig, Dependencies, AppInitialize } = modules;
 
@@ -235,7 +236,8 @@ class Mfive extends BaseClass {
     }
   }
 
-  runCompile(config, watch) {
+  runCompile(config, watch, build) {
+    const { msg } = this;
     // run when config avaliable
     for (const key in config) {
       if (config.hasOwnProperty(key)) {
@@ -256,6 +258,10 @@ class Mfive extends BaseClass {
           console.log(key + ' is not run');
         }
       }
+    }
+
+    if (build) {
+      return msg('create build to build');
     }
 
     // Force run when pug disable
@@ -361,9 +367,17 @@ class Mfive extends BaseClass {
       return this.runCompile(config, true);
     }
     if (argv && argv.build) {
-      console.log('TODO BUILD');
-      const build = true;
-      // return this.runCompile(config, true, build);
+      try {
+        const build = true;
+        const buldConfig = JSON.parse(
+          JSON.stringify(config).replace(/\"public/g, '"build')
+        );
+        cp.execSync('rm -rf build');
+        return this.runCompile(buldConfig, false, build);
+      } catch (error) {
+        msg(error, 'err');
+        process.exit();
+      }
     }
     return console.log(this.help());
   }

@@ -36,9 +36,6 @@ class Compiler extends BaseClass {
       argv = [...argv, ...extraArgv];
     }
 
-    console.log('argv', argv);
-    console.log('argv', argv.join(' '));
-
     const sass = cp.spawn(process.argv[0], argv);
     sass.stdout.on('data', function (data) {
       console.log(colors.info('sass:' + file + ' log'));
