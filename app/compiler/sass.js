@@ -17,19 +17,28 @@ class Compiler extends BaseClass {
   }
 
   run(watch, file, config) {
-    const { msg, err, colors } = this;
+    const { msg, err, colors, func } = this;
     const { cp } = this.libs;
+    const extraArgv = func.createArgv(config && config.argv, '');
     const sassMain = config.src + '/' + file;
     const sassOutputExt = this.getSassOutputExt(
       file,
       config && config.extension
     );
     const sassOutput = config.destination + '/' + sassOutputExt;
-    const argv = ['node_modules/sass/sass.js', sassMain, sassOutput];
+    let argv = ['node_modules/sass/sass.js', sassMain, sassOutput];
     if (watch) {
       argv.push('--watch');
     }
     msg('start sass');
+
+    if (extraArgv) {
+      argv = [...argv, ...extraArgv];
+    }
+
+    console.log('argv', argv);
+    console.log('argv', argv.join(' '));
+
     const sass = cp.spawn(process.argv[0], argv);
     sass.stdout.on('data', function (data) {
       console.log(colors.info('sass:' + file + ' log'));

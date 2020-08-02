@@ -18,7 +18,7 @@ class Compiler extends BaseClass {
   init(watch, config, callBack) {
     const { msg, err, colors, func } = this;
     const { cp } = this.libs;
-    const extradArgv = func.createArgv(config && config.argv, '--');
+    const extraArgv = func.createArgv(config && config.argv, '');
 
     let pugFiles = this.getRootFiles(config.src);
 
@@ -35,8 +35,8 @@ class Compiler extends BaseClass {
       argv.push('-w');
     }
 
-    if (extradArgv) {
-      argv = [...argv, ...extradArgv];
+    if (extraArgv) {
+      argv = [...argv, ...extraArgv];
     }
 
     msg('start pug');

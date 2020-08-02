@@ -55,7 +55,8 @@ class Compiler extends BaseClass {
   }
 
   rollupReactConfig(config, jsfile) {
-    const { cp, msg } = this.libs;
+    const { cp } = this.libs;
+    const { msg } = this;
 
     const reactDependencies = ['react', 'react-dom'];
     const reactDevDependencies = [
@@ -196,7 +197,8 @@ class Compiler extends BaseClass {
       } else {
         if (
           typeof mfiveRollupConfig === 'object' &&
-          mfiveRollupConfig.hasOwnProperty('input')
+          mfiveRollupConfig.hasOwnProperty('input') &&
+          jsFile.length === 1
         ) {
           return 1;
         }
@@ -209,9 +211,10 @@ class Compiler extends BaseClass {
   }
 
   init(watch, config) {
-    const { msg, err, colors } = this;
+    const { msg, err, colors, func } = this;
     const { cp } = this.libs;
     const jsFile = this.getRootFiles(config.src);
+    const extraArgv = func.createArgv(config && config.argv, '');
 
     const rollupConfig = this.getRollupConfig(config, jsFile);
     const rollupConfigFile = 'mfive.js.rollup.js';
@@ -222,15 +225,15 @@ class Compiler extends BaseClass {
       jsFile
     );
 
-    const argv = [
-      'node_modules/rollup/dist/bin/rollup',
-      '-c',
-      rollupConfigFile,
-    ];
+    let argv = ['node_modules/rollup/dist/bin/rollup', '-c', rollupConfigFile];
 
     if (watch) {
       argv.push('--no-watch.clearScreen');
       argv.push('-w');
+    }
+
+    if (extraArgv) {
+      argv = [...argv, ...extraArgv];
     }
 
     if (isHaveConfig) {

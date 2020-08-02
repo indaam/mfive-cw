@@ -1,5 +1,6 @@
 const compiler = require('./app/compiler');
 const modules = require('./app/modules');
+const utils = require('./app/utils');
 
 const { BaseClass, CreateConfig, Dependencies, AppInitialize } = modules;
 
@@ -34,7 +35,8 @@ const CONSTANTS = {
 };
 
 const runLiveReload = (config) => {
-  const bs = require('browser-sync');
+  const { dir } = utils;
+  const bs = require(dir.root + '/node_modules/' + 'browser-sync');
   const browser = bs.create();
 
   const getHtmlPath = (config) => {
@@ -93,7 +95,7 @@ const liveReaload = (config, pugConfig, options) => {
         if (count === 1) {
           return runLiveReload(config);
         }
-      } else if (argv.main) {
+      } else if (argv['--main']) {
         if (countRender === 1) {
           return runLiveReload(config);
         }
@@ -170,7 +172,9 @@ class Mfive extends BaseClass {
   }
 
   watchAssets(config) {
-    const chokidar = require('chokidar');
+    const { dir } = utils;
+    const chokidar = require(dir.root + '/node_modules/' + 'chokidar');
+    // const chokidar = require('chokidar');
     const watchDirs = this.getAssetsWatchDirs(config);
 
     chokidar
@@ -198,8 +202,10 @@ class Mfive extends BaseClass {
   }
 
   checkPugChange(config, pugConfig, options, pugRunner) {
+    const { dir } = utils;
     const { count, countRender, pugLen, isInit } = options;
-    const chokidar = require('chokidar');
+    const chokidar = require(dir.root + '/node_modules/' + 'chokidar');
+    // const chokidar = require('chokidar');
 
     if (count === 1) {
       const watcher = chokidar.watch(pugConfig.src, {
@@ -244,7 +250,6 @@ class Mfive extends BaseClass {
               }
             });
           } else {
-            console.log('ELLL', el);
             compiler.init(watch, el);
           }
         } else {
